@@ -1,0 +1,33 @@
+How to Make Microservices Resilient :-
+
+    1) How to Avoid Cascade Failures
+        A cascade failure occurs when one microservice fails, triggering a chain reaction that causes other microservices to fail as well.
+
+    2) How to Handle Failures Gracefully with Fallbacks
+      In a chain of multiple microservices, if one service goes down, it should:
+
+      Return a default response
+      Fetch information from cache
+      Call another service as a backup
+      Fetch results directly from the database
+      
+    3)How to Make a Service Self-Healing
+      For slow-performing services, we can configure:
+
+      Timeouts – Prevent requests from hanging indefinitely
+      Retries – Allow retrying a request in case of temporary failures
+      Recovery Time – Give the failed service time to recover before retrying
+
+      Above 3 are the proble how will we solve the problem is using "resilience4j" liabrary
+
+ 
+ Resilience Patterns for Microservices :-
+      
+    Java previously had a library called Hystrix, but since it is no longer maintained, we now use Resilience4j, a lightweight fault-tolerance library designed for functional programming.
+
+    Key Resilience Patterns in Resilience4j :-
+        Circuit Breaker – Stops calling a microservice when it is failing to prevent further impact.
+        Fallback – Provides an alternative path for failing requests.
+        Retry – Retries failed requests when the service is temporarily unavailable.
+        Rate Limiter – Limits the number of requests a service can receive in a given time.
+        Bulkhead – Restricts the number of concurrent outgoing requests to prevent overloading.
