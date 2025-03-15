@@ -1,0 +1,16 @@
+What is Circuit Breaker Pattern 
+
+  The Circuit Breaker pattern helps to stop cascading failures.
+  In a microservices architecture, temporary issues such as network failures may occur.
+  When such issues arise, the Circuit Breaker pattern helps prevent cascading failures.
+
+  It monitors all remote calls, and if any microservice responds slowly, the Circuit Breaker will terminate that call.
+  It continuously monitors all remote calls, and if enough calls fail, the Circuit Breaker mechanism activates.
+  When triggered, it immediately returns a failure response to the client.
+
+  This mechanism provides enough time for the defective microservice to recover while blocking all traffic to that faulty service during the recovery period.
+
+  Advantages:
+      Fail Fast
+      Fail Gracefully
+      Recover Seamlessly
