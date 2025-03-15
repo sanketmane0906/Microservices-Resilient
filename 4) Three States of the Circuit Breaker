@@ -1,0 +1,17 @@
+Three States of the Circuit Breaker :-
+
+  To implement the Circuit Breaker pattern, we need to configure its states properly.
+
+  1) Closed State:
+    In the Closed state, the Circuit Breaker allows all incoming requests to reach the microservice.
+  
+  2) Open State:
+    If the Circuit Breaker detects that most requests are failing, it changes its state to Open.
+    In this state, it stops forwarding requests to the faulty microservice to prevent further failures.
+    
+  3) Half-Open State:
+    The Circuit Breaker remains in the Open state for a specified period.
+    After this period, it transitions to the Half-Open state, where it allows a limited number of test requests to check if the issue is resolved.
+    Based on the results:
+    If the service is healthy, the Circuit Breaker moves back to the Closed state.
+    If failures persist, it switches back to the Open state.
