@@ -1,0 +1,31 @@
+CIRCUIT BREAKER PATTERN :-
+
+1. Add Maven Dependency:
+Add spring-cloud-starter-circuitbreaker-reactor-resilience4j Maven dependency inside pom.xml.
+
+2. Add Circuit Breaker Filter:
+Inside the method where we are creating a bean of RouteLocator, add a filter of circuit breaker like highlighted below and create a REST API handling the fallback URL /contactSupport:
+
+@Bean
+public RouteLocator myRoutes(RouteLocatorBuilder builder) {
+    return builder.routes()
+        .route(p -> p.path("/easybank/accounts/**")
+            .filters(f -> f.rewritePath("/easybank/accounts/(?<segment>.*)", "/${segment}")
+                .addResponseHeader("X-Response-Time", new Date().toString())
+                .circuitBreaker(config -> config.setName("accountsCircuitBreaker") //here you can set whaever name you want 
+                    .setFallbackUri("forward:/contactSupport"))) //but here /contactSupport in the controller api inside gatewayserver  if circuit breaker come in  open state then this controller will be executed inshort fallback mechanism
+            .uri("lb://ACCOUNTS"))
+        .build();
+}
+
+3. Add Properties:
+Add the below properties inside the application.yml file:
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10 # it means at least monitor 10 requests coming toward account microservice before changing state to open or close
+        permittedNumberOfCallsInHalfOpenState: 2 # in half-open state, we need to check if our service is healed or not; for that, test 2 requests before changing state to open or close
+        failureRateThreshold: 50 # threshold rate to decide whether breaker should go to open or close state
+        waitDurationInOpenState: 10000
