@@ -22,3 +22,21 @@ public class CardsFallback implements CardsFeignClient {
         return null;
     }
 }
+
+3. Add properties: Add the below properties inside the application.yml file.
+
+spring:
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
+
+  resilience4j.circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 2
+
