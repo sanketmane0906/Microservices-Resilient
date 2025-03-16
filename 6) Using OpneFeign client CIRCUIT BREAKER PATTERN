@@ -1,0 +1,24 @@
+CIRCUIT BREAKER PATTERN Using OpenFeignClient :-
+
+1. Add maven dependency: ( both dependecies are different )
+Add spring-cloud-starter-circuitbreaker-resilience4j maven dependency inside pom.xml.
+
+2. Add circuit breaker related changes in Feign Client interfaces like shown below:
+
+@FeignClient(name = "cards", fallback = CardsFallback.class)
+public interface CardsFeignClient {
+
+    @GetMapping(value = "/api/fetch", consumes = "application/json")
+    public ResponseEntity<CardsDto> fetchCardDetails(
+        @RequestHeader("eazybank-correlation-id") String correlationId,
+        @RequestParam String mobileNumber);
+}
+
+@Component
+public class CardsFallback implements CardsFeignClient {
+
+    @Override
+    public ResponseEntity<CardsDto> fetchCardDetails(String correlationId, String mobileNumber) {
+        return null;
+    }
+}
