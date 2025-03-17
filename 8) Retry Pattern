@@ -1,0 +1,30 @@
+Retry Pattern :- 
+    The Retry Pattern allows multiple retry attempts when a service is temporarily unavailable, ensuring better resilience and fault tolerance in distributed systems.
+
+1) Retry Logic
+    Define the exact number of retry attempts.
+    Avoid excessive retries to prevent unnecessary load on the system.
+    
+2) Backoff Strategy
+    Without a backoff strategy, retries happen immediately after failure.
+    A backoff mechanism introduces a delay between retry attempts, reducing system strain.
+    
+3) Common backoff strategies:
+    Fixed delay (e.g., retry every 2 seconds).
+    Exponential backoff (e.g., first retry after 2s, then 4s, 8s, etc.).
+    Jittered backoff (adds randomness to prevent system overload).
+    
+4) Circuit Breaker Integration
+    A circuit breaker stops further retry attempts after a defined number of failures.
+    Helps prevent system overload and allows the service to recover.
+    
+      The circuit breaker transitions through states:
+          Closed (normal operation).
+          Open (stops requests after multiple failures).
+          Half-open (allows limited requests to check recovery).
+    
+5) Idempotent Operations
+    Idempotent operations ensure multiple API calls produce the same result without unintended side effects.
+    GET, DELETE requests are generally idempotent.
+    PUT, POST requests may not be idempotent and should be used cautiously with retries.
+    To make an operation idempotent, use unique request IDs or token-based mechanisms.
