@@ -1,0 +1,38 @@
+Http timeout configuration :-
+
+  In a Spring Cloud Gateway application, we configure HTTP timeouts using the httpclient properties in application.yml.
+  These properties define how long the system should wait for a connection and response before timing out.
+
+  1. Connection Timeout (connect-timeout)
+      This is the maximum time allowed to establish a connection between two microservices.
+      If the connection is not made within this time, a timeout error occurs.
+      
+        Example Scenario:
+          Microservice A is trying to communicate with Microservice B.
+          If the connection is not established within the set time, a connection timeout error is triggered.
+          The request is not even sent if the connection is not established.
+
+spring:
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 1000  # 1000ms (1 second)
+
+          Effect: If the connection is not established in 1 second, the request fails with a connection timeout error.
+
+  2. Response Timeout (response-timeout)
+      This is the maximum time the system waits for a response after successfully establishing a connection.
+      If the microservice does not send a response within this time, a timeout error occurs.
+
+        Example Scenario:
+          Microservice A successfully connects to Microservice B.
+          But if Microservice B takes too long to process and respond, the request times out.
+
+spring:
+  cloud:
+    gateway:
+      httpclient:
+        response-timeout: 5s  # 5 seconds
+
+          Effect: If no response is received in 5 seconds, a response timeout error occurs.
+
