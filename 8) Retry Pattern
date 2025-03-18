@@ -28,3 +28,47 @@ Retry Pattern :-
     GET, DELETE requests are generally idempotent.
     PUT, POST requests may not be idempotent and should be used cautiously with retries.
     To make an operation idempotent, use unique request IDs or token-based mechanisms.
+
+
+exmaple and the explanation of the code :-
+
+.route(p -> p.path("/swedishbank/loans/**")
+    .filters(f -> f.rewritePath("/swedishbank/loans/(?<segment>.*)", "/${segment}")
+            .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+            .retry(retryConfig -> retryConfig.setRetries(3)
+                    .setMethods(HttpMethod.GET)
+                    .setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, true)))
+    .uri("lb://LOANS"))
+
+Breaking Down the Retry Configuration :-
+
+    The retry method takes a retryConfig lambda where you customize the retry behavior. Here’s what each part means:
+
+I) setRetries(3)
+        Meaning: The gateway will retry the request up to 3 times if it fails. This doesn’t include the initial attempt, so there’s 1 original try + 3 retries = 4 total attempts max.
+        For Notes: "Retries: 3 (total attempts = 4)."
+
+II) setMethods(HttpMethod.GET)
+        Meaning: Retries only apply to HTTP GET requests. Other methods (POST, PUT, etc.) won’t trigger retries because they might not be idempotent (safe to repeat without side effects).
+        For Notes: "Retries only for GET requests."
+
+III) (Duration.ofMillis(100), Duration.ofMillis(1000), 2, true)
+        Meaning: Controls the delay between retry attempts using an exponential backoff strategy.
+        Duration.ofMillis(100): Minimum delay (initial wait) is 100 milliseconds.
+        Duration.ofMillis(1000): Maximum delay is 1000 milliseconds (1 second).
+        2: Multiplier (each retry doubles the previous delay, up to the max).
+        true: Adds random jitter (small random variation) to the delay to prevent synchronized retries in a distributed system.
+
+How It Works:
+        1st retry: ~100 ms (min delay).
+        2nd retry: ~200 ms (100 × 2, with jitter).
+        3rd retry: ~400 ms (200 × 2, with jitter, capped at 1000 ms).
+        
+        For Notes: "Backoff: Min 100 ms, Max 1000 ms, Multiplier 2, Jitter enabled."
+
+What Happens in Practice
+        A GET request to /swedishbank/loans/** fails (e.g., timeout or 503 error).
+        Gateway waits ~100 ms, retries (1st attempt).
+        If it fails again, waits ~200 ms, retries (2nd attempt).
+        If it fails again, waits ~400 ms, retries (3rd attempt).
+        If all retries fail, the error is passed back to the client.
