@@ -1,0 +1,28 @@
+Bulkhead Pattern :- 
+
+Purpose:
+
+  Isolates and limits the impact of failures or high loads from one component to another.
+  Prevents a single failing component from affecting the entire system.
+
+Benefits:
+
+  Increases system resilience by containing failures.
+  Ensures high availability of critical services.
+  Helps in handling high loads efficiently.
+  
+Analogy:
+
+  Named after bulkheads in ships, which compartmentalize sections to prevent flooding from sinking the entire vessel.
+  
+Implementation Approaches:
+
+  Separate Thread Pools: Assigning different thread pools for different services to prevent resource starvation.
+  Service Segmentation: Dividing microservices into different groups based on importance.
+  Database Partitioning: Using different databases or database instances for different workloads.
+  
+Use Cases:
+
+  Microservices Architecture: Prevents one overloaded service from crashing others.
+  Cloud-based Systems: Ensures smooth scaling and service isolation.
+  High Traffic Applications: Protects critical functionalities from failure due to unexpected spikes in traffic.
